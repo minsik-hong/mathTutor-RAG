@@ -27,8 +27,8 @@ if st.button("질문하기") and user_input.strip() != "":
         else:
             st.error("서버에서 응답을 받지 못했습니다.")
 
-# 대화 기록 출력
+# 대화 기록 출력 (LaTeX 수식 렌더링)
 for q, a in reversed(st.session_state.chat_history):
-    st.markdown(f"**{q}**")
-    st.markdown(f"{a}")
+    st.markdown(f"**{q}**", unsafe_allow_html=True)
+    st.markdown(a, unsafe_allow_html=True)  # 🔥 핵심
     st.markdown("---")
