@@ -1,0 +1,6 @@
+# Ignore data and db folders
+data/
+db/
+
+# Ignore environment file
+.env
