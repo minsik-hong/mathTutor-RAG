@@ -31,8 +31,9 @@ def load_json_documents(folder_path):
 
         file_path = os.path.join(folder_path, filename)
 
-        with open(file_path, "r", encoding="utf-8") as f:
-            raw_data = json.load(f)
+        # 임시 깨진 문자 무시
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            data = json.load(f)
 
         for concept_id, concept_data in raw_data.items():
             for key in ["fromConcept", "toConcept"]:
@@ -76,36 +77,45 @@ def load_pdf_documents(folder_path):
 
     return documents
 
-# ✅ 이미지 기반 JSON 로딩
+# ✅ 이미지 기반 JSON 로딩 (하위 폴더 포함)
 def load_image_json_documents(folder_path, image_folder):
     documents = []
 
-    for filename in os.listdir(folder_path):
-        if not filename.endswith(".json"):
-            continue
+    for root, _, files in os.walk(folder_path):  # 하위 폴더까지 탐색
+        for filename in files:
+            if not filename.endswith(".json"):
+                continue
 
-        file_path = os.path.join(folder_path, filename)
-        with open(file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            file_path = os.path.join(root, filename)
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
 
-        question_text = data["OCR_info"][0].get("question_text", "")
-        image_filename = data.get("question_filename", "")
-        image_path = os.path.join(image_folder, image_filename)
+            # OCR 텍스트 가져오기
+            question_text = data["OCR_info"][0].get("question_text", "")
+            image_filename = data.get("question_filename", "")
 
-        info = data.get("question_info", [{}])[0]  # 첫 번째 항목만 사용
+            # 이미지 경로 찾기 (image_folder 하위 전체에서 검색)
+            image_path = None
+            for img_root, _, img_files in os.walk(image_folder):
+                if image_filename in img_files:
+                    image_path = os.path.join(img_root, image_filename)
+                    break
 
-        metadata = {
-            "id": data.get("id", ""),
-            "question_topic": info.get("question_topic_name", ""),
-            "question_grade": info.get("question_grade", ""),
-            "question_type": info.get("question_type1", ""),
-            "difficulty": info.get("question_difficulty", ""),
-            "step": info.get("question_step", ""),
-            "image_path": image_path,
-            "source": filename
-        }
+            info = data.get("question_info", [{}])[0]  # 첫 번째 question_info 사용
 
-        documents.append(Document(page_content=question_text, metadata=metadata))
+            metadata = {
+                "id": data.get("id", ""),
+                "question_topic": info.get("question_topic_name", ""),
+                "question_grade": info.get("question_grade", ""),
+                "question_type": info.get("question_type1", ""),
+                "question_topic_name": info.get("question_topic_name", ""),
+                "difficulty": info.get("question_difficulty", ""),
+                "step": info.get("question_step", ""),
+                "image_path": image_path or "경로 없음",
+                "source": filename
+            }
+
+            documents.append(Document(page_content=question_text, metadata=metadata))
 
     return documents
 

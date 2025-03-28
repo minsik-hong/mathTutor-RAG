@@ -4,3 +4,7 @@ db/
 
 # Ignore environment file
 .env
+
+
+i-scream/
+models/
