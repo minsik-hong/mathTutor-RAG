@@ -127,7 +127,7 @@ def ask_question_by_id(vectordb, concept_id, question):
 
     qa_chain = RetrievalQA.from_chain_type(
         llm=ChatOpenAI(
-            model_name="gpt-3.5-turbo-16k",
+            model_name="gpt-4o-mini",
             temperature=0.3,
             openai_api_key=OPENAI_API_KEY
         ),
@@ -163,8 +163,6 @@ if __name__ == "__main__":
     concept_id = 5844
     question = "학생이 개념 id 5844에 해당하는 내용을 이해하지 못했습니다. 쉽게 설명해주고 문제를 만들어주세요."
     answer = ask_question_by_id(vectordb, concept_id, question)
-
-
 
     # Step 4: 출력 및 저장
     print("📌 질문:", question)
