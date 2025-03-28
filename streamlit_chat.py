@@ -2,6 +2,7 @@
 import os
 import streamlit as st
 import requests
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,6 +10,13 @@ API_URL = "http://localhost:8000/ask"  # FastAPI 백엔드 주소
 
 st.set_page_config(page_title="수학 챗봇", layout="wide")
 st.title("📚 수학 챗봇")
+
+def render_answer_with_latex(answer: str):
+    """
+    Streamlit natively renders $...$ (inline) and $$...$$ (block) LaTeX inside markdown.
+    No need to convert it. Just pass it as-is using markdown.
+    """
+    st.markdown(answer)
 
 # 세션 상태 초기화
 if "chat_history" not in st.session_state:
@@ -29,6 +37,7 @@ if st.button("질문하기") and user_input.strip() != "":
 
 # 대화 기록 출력 (LaTeX 수식 렌더링)
 for q, a in reversed(st.session_state.chat_history):
-    st.markdown(f"**{q}**", unsafe_allow_html=True)
-    st.markdown(a, unsafe_allow_html=True)  # 🔥 핵심
+    st.markdown(f"**{q}**")
+    render_answer_with_latex(a)
     st.markdown("---")
+
