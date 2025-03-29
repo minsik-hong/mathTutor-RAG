@@ -48,7 +48,7 @@
 - 시연 영상
 [![시연 영상](./video/screen.png)](https://www.youtube.com/watch?v=R4IMxaiwLeg)
 
-- 캡쳐본
+- 결과 제공 예시
 ![파일이름](./video/mark.png)
 ![파일이름](./video/output.png)
 ![파일이름](./video/tag.png)
