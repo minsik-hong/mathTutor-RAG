@@ -4,7 +4,8 @@ from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
-from models.inference import get_lowest_prob_problems
+# from models.inference import get_lowest_prob_problems
+from models.inference3 import st_
 
 
 # ✅ API 키 로딩
@@ -147,30 +148,33 @@ def ask_question_by_achievement_name(vectordb, achievement_name, question):
 
     return answer
 
-# ✅ Markdown 저장
-def save_answer_as_markdown(question, answer, file_path="result.md", folder="genResult"):
-    os.makedirs(folder, exist_ok=True)  # 폴더가 없으면 생성
-    full_path = os.path.join(folder, file_path)
-    with open(full_path, "w", encoding="utf-8") as f:
-        f.write(f"# 질문\n\n{question}\n\n")
-        f.write(f"# 답변\n\n{answer}\n")
-    print(f"답변이 '{full_path}'에 저장되었습니다.")
+def get_docs_by_semester(vectordb, semester):
+    """
+    해당 semester(예: '초등-초5-1학기')로 필터링된 문서들을 가져옵니다.
+    """
+    retriever = vectordb.as_retriever(
+        search_kwargs={"k": 100, "filter": {"semester": semester}}
+    )
+    # '학습'이라는 키워드로 더미 검색 (필수 아님)
+    docs = retriever.get_relevant_documents("학습")
+    return docs
+
 
 
 # 메인 실행
 if __name__ == "__main__":
-    vectordb = load_vector_db()
-    print("✅ 벡터 DB 로드 완료")
+
+    vectordb = load_vector_db(persist_dir=CHROMA_DB_DIR)
+    print("개념 및 문제 벡터 DB 로드 완료")
+
 
     # 🔹 Inference에서 Problem ID 가져오기
-    model_path = "/Users/hongminsik/Desktop/mathRag/models/model_best.pth"
-    csv_path = "/Users/hongminsik/Desktop/mathRag/i-scream/i-scream_test.csv"
-    student_index = 1  # 분석할 학생의 인덱스
-    num_problems = 1865  # 총 문제 수
 
+    q_input = [1874,1873,1876,1877,461]
+    r_input = [1,1,0,0,1]
 
     # Get Problem IDs with the lowest probabilities
-    problem_ids = get_lowest_prob_problems(model_path, csv_path, student_index, num_problems, top_n=1) # 개수 조정
+    problem_ids = st_(q_input, r_input, target_grade=3) # 개수 조정
     print(f"🔹 가져온 Problem IDs: {problem_ids}")
 
     # 🔹 각 Problem ID에 대해 질문 생성 및 저장
@@ -200,5 +204,5 @@ if __name__ == "__main__":
             f.write(f"# 질문 (문제 예시)\n\n{problem_question}\n\n")
             f.write(f"# 문제 예시 및 해설\n\n{problem_answer}\n")
 
-        print(f"✅ Problem ID {problem_id}에 대한 개념 + 문제 설명 저장 완료: {output_file}")
+        print(f"Problem ID {problem_id}에 대한 개념 + 문제 설명 저장 완료: {output_file}")
 
