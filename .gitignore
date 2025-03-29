@@ -9,3 +9,4 @@ db/
 .blank_check.py
 .separate.py
 .streamlit_chat.py
+.__pychache__
