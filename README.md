@@ -45,9 +45,10 @@
 
 ## 🎬 시연 영상 및 캡쳐본
 
-
+- 시연 영상
 [![시연 영상](./video/screen.png)](https://www.youtube.com/watch?v=R4IMxaiwLeg)
 
+- 캡쳐본
 ![파일이름](./video/mark.png)
 ![파일이름](./video/output.png)
 ![파일이름](./video/tag.png)
