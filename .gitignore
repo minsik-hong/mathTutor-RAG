@@ -6,7 +6,7 @@ db/
 .env
 
 
-.blank_check.py
-.separate.py
-.streamlit_chat.py
-.__pychache__
+blank_check.py
+separate.py
+streamlit_chat.py
+__pychache__
