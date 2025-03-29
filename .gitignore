@@ -9,4 +9,4 @@ db/
 blank_check.py
 separate.py
 streamlit_chat.py
-__pycache__
+__pycache__/
