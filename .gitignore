@@ -6,3 +6,6 @@ db/
 .env
 
 
+.blank_check.py
+.separate.py
+.streamlit_chat.py

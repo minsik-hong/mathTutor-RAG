@@ -18,16 +18,16 @@ def load_vector_db(persist_dir=CHROMA_DB_DIR):
     return Chroma(persist_directory=persist_dir, embedding_function=embeddings)
 
 # ✅ json 메타데이터 기반 질문
-def ask_question_by_chapter_id(vectordb, chapter_id, question):
+def ask_question_by_chapter_id(vectordb, concept_id, question):
     retriever = vectordb.as_retriever(
         # k=1 -> 가장 유사한 문서 1개만 검색
-        search_kwargs={"k": 1, "filter": {"chapter_id": str(chapter_id)}} # 이 곳에 참조 키 입력
+        search_kwargs={"k": 1, "filter": {"concept_id": str(concept_id)}} # 이 곳에 참조 키 입력
     )
 
     prompt_template = """
 당신은 초등학, 중학교 수학 교과 과정을 잘 아는 교육 전문가입니다.
 
-다음 문서는 id가 {chapter_id}인 개념에 대한 설명, 학기 정보, 관련 단원, 성취 기준 등을 담고 있습니다.
+다음 문서는 id가 {concept_id}인 개념에 대한 설명, 학기 정보, 관련 단원, 성취 기준 등을 담고 있습니다.
 
 학생이 이 개념을 어려워합니다. 아래 문서를 참고하여:
 1. 개념을 간단하고 명확하게 설명하고,
@@ -60,7 +60,7 @@ def ask_question_by_chapter_id(vectordb, chapter_id, question):
 ### ✅ 정답 및 해설
 정답 1: ...
 정답 2: ...
-""".replace("{chapter_id}", str(chapter_id))
+""".replace("{concept_id}", str(concept_id))
 
     prompt = PromptTemplate(
         input_variables=["context", "question"],
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     # problem_ids = get_lowest_prob_problems(model_path, csv_path, student_index, num_problems, top_n=1) # 개수 조정
     # print(f"🔹 가져온 Problem IDs: {problem_ids}")
 
-    problem_ids = [447, 475]
+    problem_ids = [309, 447, 475]
 
     # 🔹 각 Problem ID에 대해 질문 생성 및 저장
     for problem_id in problem_ids:

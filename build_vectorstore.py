@@ -31,7 +31,7 @@ def load_json_documents(folder_path):
 
         file_path = os.path.join(folder_path, filename)
 
-        # 임시 깨진 문자 무시
+        # 
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             data = json.load(f)
 
